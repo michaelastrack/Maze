@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<link th:href="@{/css/styles.css}" rel="stylesheet" />
+		<title>Maze Game</title>
+	</head>
+	
+	<body>
+		<h3>Welcome to the Maze Game</h3>
+		<br></br>
+		<h3>Warning, there is no moving backwards in this game</h3>
+		<h3>The game will end if any of the following occurs:</h3>
+		<ol>
+			<li>You reach the finish of the maze(Success!)</li>
+			<li>You return back to the starting space(Failure)</li>
+			<li>You run into a dead end(Failure)</li>
+		</ol>
+		<h2>Select a Maze below, then click the button to start the maze.</h2>
+		<br></br>
+		<form method = "post" action = "/start">
+			<button type = "submit">Start</button>
+		</form>
+		
+		<div><h3>Click the button below to Create a new maze.</h3></div>
+		<form method = "post" action = "/newcreate">
+			<button type = "submit">Create</button>
+		</form>
+		<br></br>
+		<br></br>
+		<br></br>
+	</body>
+
+	<footer><div>Created by Michael Astrack</div></footer>
+
+</html>

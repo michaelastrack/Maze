@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<link th:href="@{/css/styles.css}" rel="stylesheet" />
+		<title>Maze Game</title>
+	</head>
+	
+	<body>
+		<a href="/main">Home</a>
+		
+		<h4>Enter in the size of your maze</h4>
+		<form method = "post" action = "/startcreate">
+  			Size (between 3 and 10):
+  			<input type="number" name="size" min="3" max="10"></input>
+  			<br></br>
+  			Maze Name
+  			<input type="text" name = "name"></input>
+  			<br></br>
+  			Initial Direction:
+  			<input type = "radio" name = "start" value = "1">North</input>
+			<input type = "radio" name = "start" value = "2">East</input>
+			<input type = "radio" name = "start" value = "3">South</input>
+			<input type = "radio" name = "start" value = "4">West</input>
+  			<br></br>
+  			<button type = "submit">Submit</button>
+		</form>
+		
+		
+	</body>
+
+	<footer><div>Created by Michael Astrack</div></footer>
+
+</html>

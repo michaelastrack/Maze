@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<link th:href="@{/css/styles.css}" rel="stylesheet" />
+		<title>Maze Game</title>
+	</head>
+	
+	<body>
+		<a href="/main">Home</a>
+		
+		<div th:text = "'Enter the information for the block in row ' + ${row} + ' column ' + ${col}"></div>
+		<form method = "post" action = "/create">
+			<div><h4>Is this block the start of the maze?</h4></div>
+			<input type = "radio" name = "start" value = "true">Yes</input>
+			<input type = "radio" name = "start" value = "false">No</input>
+			<div><h4>Is this block the end of the maze?</h4></div>
+			<input type = "radio" name = "finish" value = "true">Yes</input>
+			<input type = "radio" name = "finish" value = "false">No</input>
+			<div><h4>Please select the letter that corresponds to this type of block</h4></div>
+			<input type = "radio" name = "type" value = "A">A</input>
+			<input type = "radio" name = "type" value = "B">B</input>
+			<input type = "radio" name = "type" value = "C">C</input>
+			<input type = "radio" name = "type" value = "D">D</input>
+			<br></br>
+			<input type = "radio" name = "type" value = "E">E</input>
+			<input type = "radio" name = "type" value = "F">F</input>
+			<input type = "radio" name = "type" value = "G">G</input>
+			<input type = "radio" name = "type" value = "H">H</input>
+			<br></br>
+			<input type = "radio" name = "type" value = "I">I</input>
+			<input type = "radio" name = "type" value = "J">J</input>
+			<input type = "radio" name = "type" value = "K">K</input>
+			<input type = "radio" name = "type" value = "L">L</input>
+			<br></br>
+			<input type = "radio" name = "type" value = "M">M</input>
+			<input type = "radio" name = "type" value = "N">N</input>
+			<input type = "radio" name = "type" value = "O">O</input>
+			<input type = "radio" name = "type" value = "P">P</input>
+			<br></br>
+			<button type = "submit">Submit</button>
+		
+		</form>
+	</body>
+
+	<footer><div>Created by Michael Astrack</div></footer>
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<link th:href="@{/css/styles.css}" rel="stylesheet" />
+		<title>Maze Game</title>
+		
+	</head>
+	
+	<body>
+		<a href="/main">Home</a>
+		<br></br>
+		<textarea th:text = "${displaymaze}"></textarea>
+		<h4>Legend</h4>
+		<ul>
+			<li>F = Finish Space</li>
+			<li>x = Your Position</li>
+			<li>O = Unvisited Squares</li>
+		</ul>
+
+		<h4>Select a Direction to move</h4>
+		<form method = "post" action = "/maze">
+		
+			<div th:if="${north}"><input type = "radio" name = "direction" value = "1">North</input></div>
+			
+			<div th:if="${east}"><input type = "radio" name = "direction" value = "2">East</input></div>
+			
+			<div th:if="${south}"><input type = "radio" name = "direction" value = "3">South</input></div>
+			
+			<div th:if="${west}"><input type = "radio" name = "direction" value = "4">West</input></div>
+			<br></br>
+			
+			
+			<!--  Original Code for the buttons before they were conditional
+			<input type = "radio" name = "direction" value = "north">North</input>
+			<br></br>
+			<input type = "radio" name = "direction" value = "east">East</input>
+			<br></br>
+			<input type = "radio" name = "direction" value = "south">South</input>
+			<br></br>
+			<input type = "radio" name = "direction" value = "west">West</input>
+			<br></br> -->
+			
+			<button type = "submit">Submit</button>
+		</form>
+		
+		<br></br>
+		<br></br>
+		<br></br>
+	</body>
+
+
+	<footer><div>Created by Michael Astrack</div></footer>
+</html>
