@@ -1,32 +1,26 @@
 package org.launchcode.maze.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.launchcode.maze.models.Block;
 import org.launchcode.maze.models.Maze;
-import org.launchcode.maze.models.TypeA;
-import org.launchcode.maze.models.TypeB;
-import org.launchcode.maze.models.TypeC;
-import org.launchcode.maze.models.TypeD;
-import org.launchcode.maze.models.TypeE;
-import org.launchcode.maze.models.TypeF;
-import org.launchcode.maze.models.TypeG;
-import org.launchcode.maze.models.TypeH;
-import org.launchcode.maze.models.TypeJ;
-import org.launchcode.maze.models.TypeK;
-import org.launchcode.maze.models.TypeL;
-import org.launchcode.maze.models.TypeM;
-import org.launchcode.maze.models.TypeN;
-import org.launchcode.maze.models.TypeP;
+import org.launchcode.maze.models.User;
+import org.launchcode.maze.models.daos.MazeDao;
+import org.launchcode.maze.models.daos.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class MazeController {
+public class MazeController extends AbstractController{
 	
 	int s;
+	int size;
 	int x;
 	int y;
 	Block [][] blocks;
@@ -39,89 +33,53 @@ public class MazeController {
 	String displaymaze;
 	String message;
 	String S;
+	long start;
+	long time;
+	List<Maze> mazes;
+	String name;
+	User user;
+	HttpSession thisSession;
+	String [][] path;
 	
-	@RequestMapping (value = "/", method = RequestMethod.GET)
-	public String SlashPage () {
-		
-		return "redirect:/main";
-	}
+	@Autowired
+	private MazeDao mazedao;
 	
-	@RequestMapping (value = "/main", method = RequestMethod.GET)
-	public String MainPage () {
-		return "main";
-	}
+	@Autowired
+	private UserDao userdao;
 	
 	@RequestMapping (value = "/start", method = RequestMethod.POST)
 	public String StartMaze (HttpServletRequest request, Model model) {
 		
-		x = 5;
-		y = 0;
-		s = 6;
-		blocks = new Block [s][s];
-		m = new Maze(s, x, y, blocks, "Demo", 1);
+		name = request.getParameter("choice");
+		m = mazedao.findByName(name);
+		int [][]intblock = m.getIntblock();
+		blocks = Maze.InttoBlock(intblock);
+		size = m.getSize();
+		path = new String [size][size];
+		m.initPath(blocks, path);
+		displaymaze = m.DisplayPath(path);
 		orient = m.getStartorient();
-		// row 0
-		m.blocks[0][0] = new TypeJ (false, false);
-		m.blocks[0][1] = new TypeK (false, false);
-		m.blocks[0][2] = new TypeL (false, false);
-		m.blocks[0][3] = new TypeE (false, false);
-		m.blocks[0][4] = new TypeL (false, false);
-		m.blocks[0][5] = new TypeD (false, true);
-		
-		// row 1
-		m.blocks[1][0] = new TypeB (false, false);
-		m.blocks[1][1] = new TypeA (false, false);
-		m.blocks[1][2] = new TypeE (false, false);
-		m.blocks[1][3] = new TypeD (false, false);
-		m.blocks[1][4] = new TypeP (false, false);
-		m.blocks[1][5] = new TypeH (false, false);
-		
-		// row 2
-		m.blocks[2][0] = new TypeH (false, false);
-		m.blocks[2][1] = new TypeH (false, false);
-		m.blocks[2][2] = new TypeN (false, false);
-		m.blocks[2][3] = new TypeA (false, false);
-		m.blocks[2][4] = new TypeL (false, false);
-		m.blocks[2][5] = new TypeD (false, false);
-		
-		// row 3
-		m.blocks[3][0] = new TypeH (false, false);
-		m.blocks[3][1] = new TypeN (false, false);
-		m.blocks[3][2] = new TypeL (false, false);
-		m.blocks[3][3] = new TypeA (false, false);
-		m.blocks[3][4] = new TypeL (false, false);
-		m.blocks[3][5] = new TypeF (false, false);
-		
-		// row 4
-		m.blocks[4][0] = new TypeB (false, false);
-		m.blocks[4][1] = new TypeG (false, false);
-		m.blocks[4][2] = new TypeM (false, false);
-		m.blocks[4][3] = new TypeA (false, false);
-		m.blocks[4][4] = new TypeG (false, false);
-		m.blocks[4][5] = new TypeJ (false, false);
-		
-		// row 5
-		m.blocks[5][0] = new TypeB (true, false);
-		m.blocks[5][1] = new TypeC (false, false);
-		m.blocks[5][2] = new TypeL (false, false);
-		m.blocks[5][3] = new TypeC (false, false);
-		m.blocks[5][4] = new TypeC (false, false);
-		m.blocks[5][5] = new TypeF (false, false);
-		
-		m.initPath();
-		displaymaze = m.DisplayPath();
+		for (int i = 0; i < m.getSize(); i++) {
+			for (int j = 0; j < m.getSize(); j++) {
+				if (blocks[i][j].isStart()) {
+					m.setXpos(i);
+					m.setYpos(j);
+				}
+			}
+		x = m.getXpos();
+		y = m.getYpos();
 		
 		if (orient != 3) {
-			north = m.blocks[x][y].isNorth();
+			north = blocks[x][y].isNorth();
 		}
 		if (orient != 4) {
-			east = m.blocks[x][y].isEast();
+			east = blocks[x][y].isEast();
 		}
 		if (orient != 1) {
-			south = m.blocks[x][y].isSouth();
+			south = blocks[x][y].isSouth();
 		}
 		if (orient != 2) {
-			west = m.blocks[x][y].isWest();
+			west = blocks[x][y].isWest();
 		} 
 		
 		model.addAttribute("north", north);
@@ -131,38 +89,59 @@ public class MazeController {
 		
 		
 		model.addAttribute("displaymaze", displaymaze);
-		for (int i = 0; i < m.getSize(); i++) {
-			for (int j = 0; j < m.getSize(); j++) {
-				if (m.blocks[i][j].isStart()) {
-					m.setXpos(i);
-					m.setYpos(j);
-				}
-			}
+
 		}
 		
+		start = System.currentTimeMillis();
 		return "maze";
 	}
 	
 	@RequestMapping (value = "/maze", method = RequestMethod.POST)
 	public String PlayMaze (HttpServletRequest request, Model model) {
 		orient = Integer.parseInt(request.getParameter("direction"));
-		m.Move(orient);
+		m.Move(orient, path);
 		x=m.getXpos();
 		y=m.getYpos();
-		displaymaze = m.DisplayPath();
+		displaymaze = m.DisplayPath(path);
 		
-		if (m.blocks[x][y].isDeadend()) {
+		if (blocks[x][y].isDeadend()) {
+			thisSession = request.getSession();
+			user = getUserFromSession (thisSession);
+			user.fail();
+			m.fail();
+			mazedao.save(m);
+			userdao.save(user);
 			message = "You have run into a Dead End.  Game Over.";
+			message += "  On average people were able to complete this maze " + m.percentage() + " percent of the time.  ";
+			message += user.getUsername() + " , you have successfully completed mazes on " + user.percentage() + " percent of your sttempts.";
 			model.addAttribute("message", message);
 			return "GameOver";
 		}
-		if (m.blocks[x][y].isStart()) {
+		if (blocks[x][y].isStart()) {
+			thisSession = request.getSession();
+			user = getUserFromSession (thisSession);
+			user.fail();
+			m.fail();
+			mazedao.save(m);
+			userdao.save(user);
 			message = "You have returned back to the Start.  Game Over.";
+			message += "  On average people were able to complete this maze " + m.percentage() + " percent of the time.  ";
+			message += user.getUsername() + " , you have successfully completed mazes on " + user.percentage() + " percent of your sttempts.";
 			model.addAttribute("message", message);
 			return "GameOver";
 		}
-		if (m.blocks[x][y].isFinish()) {
-			message = "Congratulations, you have made it to the end of the maze!";
+		if (blocks[x][y].isFinish()) {
+			thisSession = request.getSession();
+			user = getUserFromSession (thisSession);
+			user.complete();
+			time = (System.currentTimeMillis() - start) / 1000;
+			m.complete(time);
+			mazedao.save(m);
+			userdao.save(user);
+			message = "Congratulations, you have made it to the end of the maze!  It took you " + time + " seconds to complete the maze.";
+			message += "  The Average person was able to complete this same maze in " + m.getAvgtime() + " seconds.";
+			message += "  On average people have successfully completed this maze " + m.percentage() + " percent of the time.";
+			message += user.getUsername() + " , you have successfully completed mazes on " + user.percentage() + " percent of your sttempts.";
 			model.addAttribute("message", message);
 			return "GameOver";
 		}
@@ -173,16 +152,16 @@ public class MazeController {
 		south = false;
 		west = false;
 		if (orient != 3) {
-			north = m.blocks[x][y].isNorth();
+			north = blocks[x][y].isNorth();
 		}
 		if (orient != 4) {
-			east = m.blocks[x][y].isEast();
+			east = blocks[x][y].isEast();
 		}
 		if (orient != 1) {
-			south = m.blocks[x][y].isSouth();
+			south = blocks[x][y].isSouth();
 		}
 		if (orient != 2) {
-			west = m.blocks[x][y].isWest();
+			west = blocks[x][y].isWest();
 		} 
 		
 		model.addAttribute("north", north);

@@ -6,6 +6,7 @@
 	</head>
 	
 	<body>
+		<a href="/">Logout</a>
 		<h3>Welcome to the Maze Game</h3>
 		<br></br>
 		<h3>Warning, there is no moving backwards in this game</h3>
@@ -18,6 +19,9 @@
 		<h2>Select a Maze below, then click the button to start the maze.</h2>
 		<br></br>
 		<form method = "post" action = "/start">
+			<select name = "choice">
+				<option th:each="maze : ${mazes}" th:value = "${maze.name}" th:text = "${maze.name} + ' - Size - ' + ${maze.size}"></option>
+			</select>
 			<button type = "submit">Start</button>
 		</form>
 		

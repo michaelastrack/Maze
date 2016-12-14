@@ -6,40 +6,42 @@
 	</head>
 	
 	<body>
-		<a href="/main">Home</a>
+		<div><a href="/main">Home</a></div>
+		<div><a href="/">Logout</a></div>
 		
 		<div th:text = "'Enter the information for the block in row ' + ${row} + ' column ' + ${col}"></div>
 		<form method = "post" action = "/create">
 			<div><h4>Is this block the start of the maze?</h4></div>
-			<input type = "radio" name = "start" value = "true">Yes</input>
-			<input type = "radio" name = "start" value = "false">No</input>
+			<input type = "radio" name = "start" value = "10">Yes</input>
+			<input type = "radio" name = "start" value = "20">No</input>
 			<div><h4>Is this block the end of the maze?</h4></div>
-			<input type = "radio" name = "finish" value = "true">Yes</input>
-			<input type = "radio" name = "finish" value = "false">No</input>
+			<input type = "radio" name = "finish" value = "1">Yes</input>
+			<input type = "radio" name = "finish" value = "2">No</input>
 			<div><h4>Please select the letter that corresponds to this type of block</h4></div>
-			<input type = "radio" name = "type" value = "A">A</input>
-			<input type = "radio" name = "type" value = "B">B</input>
-			<input type = "radio" name = "type" value = "C">C</input>
-			<input type = "radio" name = "type" value = "D">D</input>
+			<input type = "radio" name = "type" value = "1000">A</input>
+			<input type = "radio" name = "type" value = "1100">B</input>
+			<input type = "radio" name = "type" value = "1200">C</input>
+			<input type = "radio" name = "type" value = "1300">D</input>
 			<br></br>
-			<input type = "radio" name = "type" value = "E">E</input>
-			<input type = "radio" name = "type" value = "F">F</input>
-			<input type = "radio" name = "type" value = "G">G</input>
-			<input type = "radio" name = "type" value = "H">H</input>
+			<input type = "radio" name = "type" value = "1400">E</input>
+			<input type = "radio" name = "type" value = "1500">F</input>
+			<input type = "radio" name = "type" value = "1600">G</input>
+			<input type = "radio" name = "type" value = "1700">H</input>
 			<br></br>
-			<input type = "radio" name = "type" value = "I">I</input>
-			<input type = "radio" name = "type" value = "J">J</input>
-			<input type = "radio" name = "type" value = "K">K</input>
-			<input type = "radio" name = "type" value = "L">L</input>
+			<input type = "radio" name = "type" value = "1800">I</input>
+			<input type = "radio" name = "type" value = "1900">J</input>
+			<input type = "radio" name = "type" value = "2000">K</input>
+			<input type = "radio" name = "type" value = "2100">L</input>
 			<br></br>
-			<input type = "radio" name = "type" value = "M">M</input>
-			<input type = "radio" name = "type" value = "N">N</input>
-			<input type = "radio" name = "type" value = "O">O</input>
-			<input type = "radio" name = "type" value = "P">P</input>
+			<input type = "radio" name = "type" value = "2200">M</input>
+			<input type = "radio" name = "type" value = "2300">N</input>
+			<input type = "radio" name = "type" value = "2400">O</input>
+			<input type = "radio" name = "type" value = "2500">P</input>
 			<br></br>
 			<button type = "submit">Submit</button>
 		
 		</form>
+		<br></br>
 	</body>
 
 	<footer><div>Created by Michael Astrack</div></footer>

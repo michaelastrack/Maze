@@ -1,6 +1,6 @@
 package org.launchcode.maze.models;
 
-public abstract class Block {
+public abstract class Block{
 	
 	private boolean start;
 	private boolean finish;

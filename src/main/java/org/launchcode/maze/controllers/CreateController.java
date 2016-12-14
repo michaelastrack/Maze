@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class CreateController {
+public class CreateController extends AbstractController{
 	
 	int size;
 	Block [][] blocks;
@@ -20,13 +20,15 @@ public class CreateController {
 	int row;
 	int col;
 	String name;
-	boolean start;
-	boolean finish;
-	String type;
+	int start;
+	int finish;
+	int type;
+	int sum;
 	String message;
 	int s;
 	int f;
 	int so;
+	int [][]Intblocks;
 	
 	@Autowired
 	private MazeDao mazedao;
@@ -48,7 +50,8 @@ public class CreateController {
 		row = 0;
 		col = 0;
 		blocks = new Block [size][size];
-		m = new Maze(size, row, col, blocks, name, so);
+		Intblocks = new int [size][size];
+		m = new Maze(size, Intblocks, name, so);
 		model.addAttribute("row", row);
 		model.addAttribute("col", col);
 		return "create";
@@ -58,10 +61,11 @@ public class CreateController {
 	public String Create (HttpServletRequest request, Model model) {
 		
 		// get parameters from user input to create the correct block
-		start = Boolean.parseBoolean(request.getParameter("start"));
-		finish = Boolean.parseBoolean(request.getParameter("finish"));
-		type = request.getParameter("type");
-		m.blocks [row][col] = m.CreateBlock(type, start, finish);
+		start = Integer.parseInt(request.getParameter("start"));
+		finish = Integer.parseInt(request.getParameter("finish"));
+		type = Integer.parseInt(request.getParameter("type"));
+		sum = start + finish + type;
+		m.Intblock [row][col] = sum;
 			
 		// Update the row and column location for the next block
 		if (col == size - 1) {
@@ -75,16 +79,20 @@ public class CreateController {
 		// If all blocks have been created check for errors in the maze, or add the maze to the database
 		if (row == size) {
 			// Error checking to ensure that every maze has one and only one start and finish
+			s = 0;
+			f = 0;
+			blocks = Maze.InttoBlock(Intblocks);
+			
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < size; j++) {
-					if (m.blocks[i][j].isFinish()) {
+					if (blocks[i][j].isFinish()) {
 						f++;
 					}
-					if (m.blocks[i][j].isStart()) {
+					if (blocks[i][j].isStart()) {
 						s++;
 					}
 				}
-			}
+			} 
 			message = "";
 			if (s == 0) {
 				message += "Your maze doesn't have a start.  ";
@@ -93,15 +101,15 @@ public class CreateController {
 				message += "Your maze doesn't have a finish.  ";
 			}
 			if (s > 1) {
-				message += "Your maze has more than one start";
+				message += "Your maze has more than one start.  ";
 			}
 			if (f > 1) {
-				message += "Your maze has more than one finish";
+				message += "Your maze has more than one finish.  ";
 			}
 			if (message != "") {
 				model.addAttribute("message", message);
 				return "createerror";
-			}
+			} 
 			
 			// If no errors finish the maze creation process and add it to the database
 			mazedao.save(m);

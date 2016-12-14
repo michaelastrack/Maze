@@ -1,7 +1,5 @@
 package org.launchcode.maze.models;
 
-import java.util.Scanner;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,20 +14,22 @@ public class Maze {
 	protected int xpos;
 	protected int ypos;
 	protected int size;
-	public Block [][] blocks;
-	protected String [][] path;
 	protected String name;
 	protected int startorient;
 	private int uid;
+	private int completions;
+	private int fails;
+	private long avgtime;
+	public int [][] Intblock;
 	
-	public Maze (int s, int x, int y, Block[][] b, String n, int so) {
+	public Maze (int s, int[][] sb, String n, int so) {
 		this.size = s;
-		this.xpos = x;
-		this.ypos = y;
-		this.blocks = b;
-		this.path = new String [s][s];
 		this.name = n;
 		this.startorient = so;
+		this.completions = 0;
+		this.fails = 0;
+		this.avgtime = 0;
+		this.Intblock = sb;
 	}
 	
 	public Maze () {}
@@ -63,22 +63,6 @@ public class Maze {
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
-	public Block[][] getBlocks() {
-		return blocks;
-	}
-
-	public void setBlocks(Block[][] blocks) {
-		this.blocks = blocks;
-	}
-
-	public String[][] getPath() {
-		return path;
-	}
-
-	public void setPath(String[][] path) {
-		this.path = path;
-	}
 
 	@NotNull
 	@Column (name = "name")
@@ -106,29 +90,82 @@ public class Maze {
 		this.ypos = ypos;
 	}
 	
+	public int getCompletions() {
+		return completions;
+	}
+
+	public void setCompletions(int completions) {
+		this.completions = completions;
+	}
+
+	public long getAvgtime() {
+		return avgtime;
+	}
+
+	public int getFails() {
+		return fails;
+	}
+
+	public void setFails(int fails) {
+		this.fails = fails;
+	}
+
+	public void setAvgtime(long avgtime) {
+		this.avgtime = avgtime;
+	}
+
+	public int[][] getIntblock() {
+		return Intblock;
+	}
+
+	public void setIntblock(int[][] intblock) {
+		Intblock = intblock;
+	}
+
+	// After a maze has been successfully completed records the completion and adjusts the average time appropriately
+	public void complete (long time) {
+		long totaltime = this.avgtime * this.completions;
+		totaltime += time;
+		this.setCompletions((this.getCompletions() + 1));
+		this.setAvgtime((totaltime/this.getCompletions()));
+	}
+	
+	public void fail () {
+		this.setFails((this.getFails() + 1));
+	}
+	
+	// computes the percentage of time that users have successfully navigated a given maze
+	public int percentage () {
+		int percent;
+		double total = this.getFails() + this.getCompletions();
+		total = this.getCompletions()/total;
+		percent = (int) (total * 100);
+		return percent;
+	}
+
 	// Initializes the path 
-	public void initPath () {
-		for (int i = 0; i< this.size; i++) {
-			for (int j = 0; j<this.size; j++) {
-				if (this.blocks[i][j].isFinish()) {
-					this.path[i][j] = "F";
+	public void initPath (Block [][] blocks, String [][] path) {
+		for (int i = 0; i < this.size; i++) {
+			for (int j = 0; j < this.size; j++) {
+				if (blocks[i][j].isFinish()) {
+					path[i][j] = "F";
 				}
-				else if (this.blocks[i][j].isStart()) {
-					this.path[i][j] = "x";
+				else if (blocks[i][j].isStart()) {
+					path[i][j] = "x";
 				}
 				else {
-				this.path[i][j] = "O";
+				path[i][j] = "O";
 				}
 			}
 		}
 	}
 	
 	// Displays the path through the maze that the user has taken
-	public String DisplayPath () {
+	public String DisplayPath (String[][] path) {
 		String output = "";
 		for (int i = 0; i < this.size; i++) {
 			for (int j = 0; j < this.size; j++) {
-				output += this.path[i][j];
+				output += path[i][j];
 			}
 			output += " \n";
 		}
@@ -139,7 +176,7 @@ public class Maze {
 	/* Function used by the web app to populate the maze in the create portion of the program
 	 * Takes in a String that is a letter, and returns a block of that type
 	 */
-	public Block CreateBlock (String value, boolean start, boolean finish) {
+	public static Block CreateBlock (String value, boolean start, boolean finish) {
 		
 		if (value.equals("A")) {
 			Block block = new TypeA (start, finish);
@@ -206,94 +243,120 @@ public class Maze {
 			return block;
 		}
 	}
+	
+	// Takes a 2D array of Integers that is stored in the database and returns a 2D array of blocks
+	public static Block[][] InttoBlock (int [][] IB) {
+		int size = IB.length;
+		int s;
+		int f;
+		int t;
+		int temp;
+		boolean finish;
+		boolean start;
+		String type;
+		Block [][] b = new Block [size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j <size; j++) {
+				f = IB[i][j]%10;
+				temp = IB[i][j]/10;
+				s = temp % 10;
+				t = temp / 10;
+				if (f == 1) 
+					finish = true;
+				else 
+					finish = false;
+				
+				if (s == 1) 
+					start = true;
+				else 
+					start = false;
+				
+				if (t == 10) 
+					type = "A";
+				else if (t == 11)
+					type = "B";
+				else if (t == 12)
+					type = "C";
+				else if (t == 13)
+					type = "D";
+				else if (t == 14)
+					type = "E";
+				else if (t == 15)
+					type = "F";
+				else if (t == 16)
+					type = "G";
+				else if (t == 17)
+					type = "H";
+				else if (t == 18)
+					type = "I";
+				else if (t == 19)
+					type = "J";
+				else if (t == 20)
+					type = "K";
+				else if (t == 21)
+					type = "L";
+				else if (t == 22) 
+					type = "M";
+				else if (t == 23)
+					type = "N";
+				else if (t == 24)
+					type = "O";
+				else 
+					type = "P";
+				
+				b[i][j] = Maze.CreateBlock(type, start, finish);
+			}
+		}
+		
+		return b;
+	}
 
 	/* Updates the position following a move, and throws an exception if the move takes 
 	 * the user outside of the bounds of the maze, also draws the path behind the user
 	 */
-	public void Move (int orient) {
+	public void Move (int orient, String [][] path) {
 		if (orient == 1) {
-			this.path [this.xpos][this.ypos] = "|";
+			path [this.xpos][this.ypos] = "|";
 			this.xpos--;
 			if (this.xpos < 0) {
 				throw new IllegalArgumentException();
 			} 
 		}
 		else if (orient == 2) {
-			this.path [this.xpos][this.ypos] = "-";
+			path [this.xpos][this.ypos] = "-";
 			this.ypos++;
 			if (this.ypos >= this.size) {
 				throw new IllegalArgumentException();
 			} 
 		}
 		else if (orient == 3) {
-			this.path [this.xpos][this.ypos] = "|";
+			path [this.xpos][this.ypos] = "|";
 			this.xpos++;
 			if (this.xpos >= this.size) {
 				throw new IllegalArgumentException();
 			} 
 		}
 		else if (orient == 4) {
-			this.path [this.xpos][this.ypos] = "-";
+			path [this.xpos][this.ypos] = "-";
 			this.ypos--;
 			if (this.ypos < 0) {
 				throw new IllegalArgumentException();
 			} 
 		}
-		this.path[this.xpos][this.ypos] = "x";
+		path[this.xpos][this.ypos] = "x";
 		
 	}
-	
-	/* old function used when this was strictly a text based program running on the console
-	public void RunMaze (int x, int y, int o) {
-		boolean GoOn = true;
-		this.setXpos(x);
-		this.setYpos(y);
-		this.initPath();
-		int orient = o;
-		s = new Scanner(System.in);
-		int neworient;
-		boolean invalidorient = true;
-		
-		while (GoOn) {
-			this.path[xpos][ypos] = "x";
-			System.out.println(this.DisplayPath());
-			
-			System.out.println(blocks [this.xpos] [this.ypos].TryToMove(orient));
-			System.out.println("Enter in the number for the direction you want to move:");
-			neworient = s.nextInt();
-			while (invalidorient) {
-				if (neworient + 2 == orient || neworient - 2 == orient) {
-					System.out.println("You can't move backwards, please enter a new valid selection.");
-					System.out.println(blocks [this.xpos] [this.ypos].TryToMove(orient));
-					System.out.println("Enter in the number for the direction you want to move:");
-					neworient = s.nextInt();
-				}
-				else {
-					invalidorient = false;
-				}
-			}
-			orient = neworient;
-			invalidorient = true;
-			this.Move(orient);
-			if (blocks [this.xpos] [this.ypos].isDeadend()) {
-				System.out.println("You lose, you have hit a dead end.");
-				GoOn = false;
-			}
-			else if (blocks [this.xpos] [this.ypos].isFinish()) {
-				System.out.println("Congratulations you made it to the end of the maze!!!!!!");
-				GoOn = false;
-			}
-			else if (blocks [this.xpos][this.ypos].isStart()) {
-				System.out.println("Game Over, you have returned back to the start.");
-				GoOn = false;
-			}
-			
-		}
-		
-		
-	}  */
 
 	public static void main(String[] args) {
+		int [][] ib ={ {2022, 2122, 1521}, {1122, 2122, 1622}, {2322, 2122, 1312} };
+		//Maze m = new Maze (3, ib, "A", 1);
+		Block [][] blocks = Maze.InttoBlock(ib);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				System.out.println(blocks[i][j]);
+			}
+		}
+		
 		
 	}
 

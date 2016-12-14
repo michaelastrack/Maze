@@ -6,12 +6,13 @@
 	</head>
 	
 	<body>
-		<a href="/main">Home</a>
+		<div><a href="/main">Home</a></div>
+		<div><a href="/">Logout</a></div>
 		
 		<h4>Enter in the size of your maze</h4>
 		<form method = "post" action = "/startcreate">
-  			Size (between 3 and 10):
-  			<input type="number" name="size" min="3" max="10"></input>
+  			Size (between 1 and 10):
+  			<input type="number" name="size" min="1" max="10"></input>
   			<br></br>
   			Maze Name
   			<input type="text" name = "name"></input>
@@ -25,7 +26,7 @@
   			<button type = "submit">Submit</button>
 		</form>
 		
-		
+		<br></br>
 	</body>
 
 	<footer><div>Created by Michael Astrack</div></footer>
